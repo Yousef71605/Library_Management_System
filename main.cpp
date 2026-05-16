@@ -446,119 +446,189 @@ int main()
 {
     Library library;
 
-    int choice;
+    int mainChoice;
 
     do
     {
-        cout << "========================" << endl;
-        cout << "Library Management System" << endl;
-        cout << "========================" << endl;
+        cout << "========================"
+             << endl;
 
-        cout << "1. Add Book" << endl;
-        cout << "2. Display Books" << endl;
-        cout << "3. Search Book By ID" << endl;
-        cout << "4. Search Book By Title" << endl;
-        cout << "5. Create Account" << endl;
-        cout << "6. Login" << endl;
-        cout << "7. Exit" << endl;
+        cout << "Library Management System"
+             << endl;
+
+        cout << "========================"
+             << endl;
+
+        cout << "1. Admin"
+             << endl;
+
+        cout << "2. User"
+             << endl;
+
+        cout << "3. Back"
+             << endl;
 
         cout << "Enter Choice: ";
 
-        cin >> choice;
+        cin >> mainChoice;
 
-        if (choice == 1)
+        // ================= ADMIN =================
+
+        if (mainChoice == 1)
         {
-            library.addBook();
-        }
+            int adminChoice;
 
-        else if (choice == 2)
-        {
-            library.displayBooks();
-        }
-
-        else if (choice == 3)
-        {
-            library.searchBookByID();
-        }
-
-        else if (choice == 4)
-        {
-            library.searchBookByTitle();
-        }
-
-        else if (choice == 5)
-        {
-            library.createUserAccount();
-        }
-
-        else if (choice == 6)
-        {
-            int userIndex =
-            library.loginUser();
-
-            if (userIndex != -1)
+            do
             {
-                int userChoice;
+                cout << "========================"
+                     << endl;
 
-                do
+                cout << "Admin Menu"
+                     << endl;
+
+                cout << "========================"
+                     << endl;
+
+                cout << "1. Add Book"
+                     << endl;
+
+                cout << "2. Display Books"
+                     << endl;
+
+                cout << "3. Search Book By ID"
+                     << endl;
+
+                cout << "4. Search Book By Title"
+                     << endl;
+
+                cout << "5. Back"
+                     << endl;
+
+                cout << "Enter Choice: ";
+
+                cin >> adminChoice;
+
+                if (adminChoice == 1)
                 {
-                    cout << "========================"
-                         << endl;
+                    library.addBook();
+                }
 
-                    cout << "User Menu"
-                         << endl;
+                else if (adminChoice == 2)
+                {
+                    library.displayBooks();
+                }
 
-                    cout << "========================"
-                         << endl;
+                else if (adminChoice == 3)
+                {
+                    library.searchBookByID();
+                }
 
-                    cout << "1. Borrow Book"
-                         << endl;
+                else if (adminChoice == 4)
+                {
+                    library.searchBookByTitle();
+                }
 
-                    cout << "2. Return Book"
-                         << endl;
-
-                    cout << "3. Change Password"
-                         << endl;
-
-                    cout << "4. Logout"
-                         << endl;
-
-                    cout << "Enter Choice: ";
-
-                    cin >> userChoice;
-
-                    if (userChoice == 1)
-                    {
-                        library.borrowBook(userIndex);
-                    }
-
-                    else if (userChoice == 2)
-                    {
-                        library.returnBook();
-                    }
-
-                    else if (userChoice == 3)
-                    {
-                        library.changeUserPassword(userIndex);
-                    }
-
-                } while (userChoice != 4);
-            }
+            } while (adminChoice != 5);
         }
 
-        else if (choice == 7)
+        // ================= USER =================
+
+        else if (mainChoice == 2)
         {
-            cout << "Exiting Program..."
-                 << endl;
+            int userMenuChoice;
+
+            do
+            {
+                cout << "========================"
+                     << endl;
+
+                cout << "User Menu"
+                     << endl;
+
+                cout << "========================"
+                     << endl;
+
+                cout << "1. Create Account"
+                     << endl;
+
+                cout << "2. Login"
+                     << endl;
+
+                cout << "3. Back"
+                     << endl;
+
+                cout << "Enter Choice: ";
+
+                cin >> userMenuChoice;
+
+                // CREATE ACCOUNT
+
+                if (userMenuChoice == 1)
+                {
+                    library.createUserAccount();
+                }
+
+                // LOGIN
+
+                else if (userMenuChoice == 2)
+                {
+                    int userIndex =
+                    library.loginUser();
+
+                    if (userIndex != -1)
+                    {
+                        int userChoice;
+
+                        do
+                        {
+                            cout << "========================"
+                                 << endl;
+
+                            cout << "User Options"
+                                 << endl;
+
+                            cout << "========================"
+                                 << endl;
+
+                            cout << "1. Borrow Book"
+                                 << endl;
+
+                            cout << "2. Return Book"
+                                 << endl;
+
+                            cout << "3. Change Password"
+                                 << endl;
+
+                            cout << "4. Logout"
+                                 << endl;
+
+                            cout << "Enter Choice: ";
+
+                            cin >> userChoice;
+
+                            if (userChoice == 1)
+                            {
+                                library.borrowBook(userIndex);
+                            }
+
+                            else if (userChoice == 2)
+                            {
+                                library.returnBook();
+                            }
+
+                            else if (userChoice == 3)
+                            {
+                                library.changeUserPassword(userIndex);
+                            }
+
+                        } while (userChoice != 4);
+                    }
+                }
+
+            } while (userMenuChoice != 3);
         }
 
-        else
-        {
-            cout << "Invalid Choice."
-                 << endl;
-        }
-
-    } while (choice != 7);
+    } while (mainChoice != 3);
 
     return 0;
 }
