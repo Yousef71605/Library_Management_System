@@ -3,6 +3,56 @@
 #include <string>
 
 using namespace std;
+class Stack
+{
+private:
+    string books[100];
+
+    int top;
+
+public:
+    Stack()
+    {
+        top = -1;
+    }
+
+    void push(string book)
+    {
+        if (top < 99)
+        {
+            top++;
+
+            books[top] = book;
+        }
+    }
+};
+class Queue
+{
+private:
+    string books[100];
+
+    int front;
+
+    int rear;
+
+public:
+    Queue()
+    {
+        front = 0;
+
+        rear = -1;
+    }
+
+    void enqueue(string book)
+    {
+        if (rear < 99)
+        {
+            rear++;
+
+            books[rear] = book;
+        }
+    }
+};
 class BookTreeNode
 {
 public:
@@ -40,6 +90,21 @@ public:
         next = NULL;
     }
 };
+class LibraryUser
+{
+public:
+    string username;
+    string password;
+
+    string borrowedBooks[10];
+
+    int borrowedCount;
+
+    LibraryUser()
+    {
+        borrowedCount = 0;
+    }
+};
 
 class Library
 {
@@ -49,6 +114,13 @@ private:
     int totalBooks;
 
 int sortedBookIDs[100];
+LibraryUser users[100];
+
+int totalUsers;
+
+Stack recentlyAddedBooks;
+
+Queue borrowedBooksQueue;
 
 public:
     Library()
@@ -56,6 +128,7 @@ public:
         firstBook = NULL;
         bookTreeRoot = NULL;
         totalBooks=0;
+        totalUsers = 0;
     }
 
     void addBook()
@@ -91,6 +164,7 @@ public:
 sortedBookIDs[totalBooks] = newBook->bookID;
 
 totalBooks++;
+        recentlyAddedBooks.push(newBook->bookTitle);
         cout << "Book Added Successfully.\n";
     }
 
@@ -230,60 +304,331 @@ void searchBookByTitle()
              << endl;
     }
 }
+void createUserAccount()
+{
+    cout << "Enter Username: ";
+
+    cin.ignore();
+
+    getline(cin,
+            users[totalUsers].username);
+
+    cout << "Enter Password: ";
+
+    getline(cin,
+            users[totalUsers].password);
+
+    totalUsers++;
+
+    cout << "Account Created Successfully."
+         << endl;
+}
+int loginUser()
+{
+    string username;
+    string password;
+
+    cout << "Enter Username: ";
+
+    cin >> username;
+
+    cout << "Enter Password: ";
+
+    cin >> password;
+
+    for (int i = 0; i < totalUsers; i++)
+    {
+        if (users[i].username == username
+            &&
+            users[i].password == password)
+        {
+            cout << "Login Successful."
+                 << endl;
+
+            return i;
+        }
+    }
+
+    cout << "Invalid Username or Password."
+         << endl;
+
+    return -1;
+}
+void borrowBook(int userIndex)
+{
+    int id;
+
+    cout << "Enter Book ID: ";
+
+    cin >> id;
+
+    BookNode* temp = firstBook;
+
+    while (temp != NULL)
+    {
+        if (temp->bookID == id)
+        {
+            if (temp->isAvailable)
+            {
+                temp->isAvailable = false;
+
+                users[userIndex]
+                .borrowedBooks[
+                users[userIndex]
+                .borrowedCount]
+                = temp->bookTitle;
+
+                users[userIndex]
+                .borrowedCount++;
+
+                borrowedBooksQueue.enqueue(
+                temp->bookTitle);
+
+                cout << "Book Borrowed Successfully."
+                     << endl;
+            }
+
+            else
+            {
+                cout << "Book Already Borrowed."
+                     << endl;
+            }
+
+            return;
+        }
+
+        temp = temp->next;
+    }
+
+    cout << "Book Not Found."
+         << endl;
+}void returnBook()
+{
+    int id;
+
+    cout << "Enter Book ID: ";
+
+    cin >> id;
+
+    BookNode* temp = firstBook;
+
+    while (temp != NULL)
+    {
+        if (temp->bookID == id)
+        {
+            temp->isAvailable = true;
+
+            cout << "Book Returned Successfully."
+                 << endl;
+
+            return;
+        }
+
+        temp = temp->next;
+    }
+
+    cout << "Book Not Found."
+         << endl;
+}
+void changeUserPassword(int userIndex)
+{
+    cout << "Enter New Password: ";
+
+    cin >> users[userIndex].password;
+
+    cout << "Password Changed Successfully."
+         << endl;
+}
+
 };
 
 int main()
 {
     Library library;
 
-    int choice;
+    int mainChoice;
 
     do
     {
-        cout << "====================" << endl;
-        cout << "Library Management System" << endl;
-        cout << "====================" << endl;
+        cout << "========================"
+             << endl;
 
-        cout << "1. Add Book" << endl;
-        cout << "2. Display Books" << endl;
-        cout << "3. Search Book By ID" << endl;
-        cout << "4. Search Book By Title" << endl;
-        cout << "5. Exit" << endl;
+        cout << "Library Management System"
+             << endl;
+
+        cout << "========================"
+             << endl;
+
+        cout << "1. Admin"
+             << endl;
+
+        cout << "2. User"
+             << endl;
+
+        cout << "3. Back"
+             << endl;
 
         cout << "Enter Choice: ";
-        cin >> choice;
 
-        if (choice == 1)
+        cin >> mainChoice;
+
+        // ================= ADMIN =================
+
+        if (mainChoice == 1)
         {
-            library.addBook();
+            int adminChoice;
+
+            do
+            {
+                cout << "========================"
+                     << endl;
+
+                cout << "Admin Menu"
+                     << endl;
+
+                cout << "========================"
+                     << endl;
+
+                cout << "1. Add Book"
+                     << endl;
+
+                cout << "2. Display Books"
+                     << endl;
+
+                cout << "3. Search Book By ID"
+                     << endl;
+
+                cout << "4. Search Book By Title"
+                     << endl;
+
+                cout << "5. Back"
+                     << endl;
+
+                cout << "Enter Choice: ";
+
+                cin >> adminChoice;
+
+                if (adminChoice == 1)
+                {
+                    library.addBook();
+                }
+
+                else if (adminChoice == 2)
+                {
+                    library.displayBooks();
+                }
+
+                else if (adminChoice == 3)
+                {
+                    library.searchBookByID();
+                }
+
+                else if (adminChoice == 4)
+                {
+                    library.searchBookByTitle();
+                }
+
+            } while (adminChoice != 5);
         }
 
-        else if (choice == 2)
+        // ================= USER =================
+
+        else if (mainChoice == 2)
         {
-            library.displayBooks();
+            int userMenuChoice;
+
+            do
+            {
+                cout << "========================"
+                     << endl;
+
+                cout << "User Menu"
+                     << endl;
+
+                cout << "========================"
+                     << endl;
+
+                cout << "1. Create Account"
+                     << endl;
+
+                cout << "2. Login"
+                     << endl;
+
+                cout << "3. Back"
+                     << endl;
+
+                cout << "Enter Choice: ";
+
+                cin >> userMenuChoice;
+
+                // CREATE ACCOUNT
+
+                if (userMenuChoice == 1)
+                {
+                    library.createUserAccount();
+                }
+
+                // LOGIN
+
+                else if (userMenuChoice == 2)
+                {
+                    int userIndex =
+                    library.loginUser();
+
+                    if (userIndex != -1)
+                    {
+                        int userChoice;
+
+                        do
+                        {
+                            cout << "========================"
+                                 << endl;
+
+                            cout << "User Options"
+                                 << endl;
+
+                            cout << "========================"
+                                 << endl;
+
+                            cout << "1. Borrow Book"
+                                 << endl;
+
+                            cout << "2. Return Book"
+                                 << endl;
+
+                            cout << "3. Change Password"
+                                 << endl;
+
+                            cout << "4. Logout"
+                                 << endl;
+
+                            cout << "Enter Choice: ";
+
+                            cin >> userChoice;
+
+                            if (userChoice == 1)
+                            {
+                                library.borrowBook(userIndex);
+                            }
+
+                            else if (userChoice == 2)
+                            {
+                                library.returnBook();
+                            }
+
+                            else if (userChoice == 3)
+                            {
+                                library.changeUserPassword(userIndex);
+                            }
+
+                        } while (userChoice != 4);
+                    }
+                }
+
+            } while (userMenuChoice != 3);
         }
 
-        else if (choice == 3)
-        {
-            library.searchBookByID();
-        }
-
-        else if (choice == 4)
-        {
-            library.searchBookByTitle();
-        }
-
-        else if (choice == 5)
-        {
-            cout << "Exiting Program..." << endl;
-        }
-
-        else
-        {
-            cout << "Invalid Choice." << endl;
-        }
-
-    } while (choice != 5);
+    } while (mainChoice != 3);
 
     return 0;
 }
