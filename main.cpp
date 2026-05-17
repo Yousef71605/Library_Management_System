@@ -805,7 +805,13 @@ void borrowBook(int userIndex)
             {
                 temp->isAvailable = false;
                 saveBooksToFile();
+          if (users[userIndex].borrowedCount >= 10)
+           {
+          cout << "Borrow limit reached."
+             << endl;
 
+         return;
+           }
                 users[userIndex]
                 .borrowedBooks[
                 users[userIndex]
@@ -850,6 +856,13 @@ void borrowBook(int userIndex)
     {
         if (temp->bookID == id)
         {
+            if (temp->isAvailable)
+           {
+        cout << "Book is already available."
+         << endl;
+
+        return;
+          }
             temp->isAvailable = true;
             saveBooksToFile();
             cout << "Book Returned Successfully."
