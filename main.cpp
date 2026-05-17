@@ -129,6 +129,9 @@ public:
         bookTreeRoot = NULL;
         totalBooks=0;
         totalUsers = 0;
+        loadUsersFromFile();
+
+
     }
 
     void addBook()
@@ -492,6 +495,7 @@ void createUserAccount()
             users[totalUsers].password);
 
     totalUsers++;
+    saveUsersToFile();
 
     cout << "Account Created Successfully."
          << endl;
@@ -544,6 +548,7 @@ void borrowBook(int userIndex)
             if (temp->isAvailable)
             {
                 temp->isAvailable = false;
+                saveBooksToFile();
 
                 users[userIndex]
                 .borrowedBooks[
@@ -590,7 +595,7 @@ void borrowBook(int userIndex)
         if (temp->bookID == id)
         {
             temp->isAvailable = true;
-
+            saveBooksToFile();
             cout << "Book Returned Successfully."
                  << endl;
 
@@ -608,6 +613,7 @@ void changeUserPassword(int userIndex)
     cout << "Enter New Password: ";
 
     cin >> users[userIndex].password;
+    saveUsersToFile();
 
     cout << "Password Changed Successfully."
          << endl;
@@ -631,7 +637,51 @@ void saveBooksToFile()
 
     file.close();
 }
+void loadUsersFromFile()
+{
+    ifstream file("users.txt");
+
+    if (!file)
+    {
+        return;
+    }
+
+    while (true)
+    {
+        getline(file,
+                users[totalUsers].username,
+                ',');
+
+        if (file.fail())
+        {
+            break;
+        }
+
+        getline(file,
+                users[totalUsers].password);
+
+        totalUsers++;
+    }
+
+    file.close();
+}
+void saveUsersToFile()
+{
+    ofstream file("users.txt");
+
+    for (int i = 0; i < totalUsers; i++)
+    {
+        file << users[i].username
+             << ",";
+
+        file << users[i].password
+             << endl;
+    }
+
+    file.close();
+}
 };
+
 
 int main()
 {
