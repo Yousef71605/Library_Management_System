@@ -373,7 +373,7 @@ void deleteBook()
         firstBook = firstBook->next;
 
         delete del;
-
+       bookTreeRoot=deleteFromBST(bookTreeRoot,id);
         saveBooksToFile();
 
         cout << "Book Deleted Successfully."
@@ -995,7 +995,7 @@ void loadBooksFromFile()
         newBook->bookID;
 
         totalBooks++;
-
+        bookTreeRoot=insertIntoBST(bookTreeRoot,newBook->bookID,newBook->bookTitle);
         if (firstBook == NULL)
         {
             firstBook = newBook;
@@ -1015,7 +1015,85 @@ void loadBooksFromFile()
 
     file.close();
 }
+BookTreeNode* deleteFromBST(BookTreeNode* node, int id)
+{
+    if (node == NULL)
+    {
+        return NULL;
+    }
 
+    if (id < node->bookID)
+    {
+        node->left =
+        deleteFromBST(node->left, id);
+    }
+
+    else if (id > node->bookID)
+    {
+        node->right =
+        deleteFromBST(node->right, id);
+    }
+
+    else
+    {
+        // الحالة 1: بدون أبناء
+        if (node->left == NULL
+            &&
+            node->right == NULL)
+        {
+            delete node;
+
+            return NULL;
+        }
+
+        // الحالة 2: ابن واحد
+        else if (node->left == NULL)
+        {
+            BookTreeNode* temp =
+            node->right;
+
+            delete node;
+
+            return temp;
+        }
+
+        else if (node->right == NULL)
+        {
+            BookTreeNode* temp =
+            node->left;
+
+            delete node;
+
+            return temp;
+        }
+
+        // الحالة 3: ابنان
+        else
+        {
+            BookTreeNode* successor =
+            node->right;
+
+            while (successor->left != NULL)
+            {
+                successor =
+                successor->left;
+            }
+
+            node->bookID =
+            successor->bookID;
+
+            node->bookTitle =
+            successor->bookTitle;
+
+            node->right =
+            deleteFromBST(
+            node->right,
+            successor->bookID);
+        }
+    }
+
+    return node;
+}
 };
 
 
