@@ -131,6 +131,7 @@ public:
         totalBooks=0;
         totalUsers = 0;
         loadUsersFromFile();
+        loadBooksFromFile();
 
 
     }
@@ -642,6 +643,14 @@ void createUserAccount()
 
     return;
 }
+if (isUsernameFound(
+    users[totalUsers].username))
+{
+    cout << "Username Already Exists."
+         << endl;
+
+    return;
+}
 
     cout << "Enter Password: ";
 
@@ -830,6 +839,85 @@ void saveUsersToFile()
 
         file << users[i].password
              << endl;
+    }
+
+    file.close();
+}
+bool isUsernameFound(string username)
+{
+    for (int i = 0; i < totalUsers; i++)
+    {
+        if (convertToLower(users[i].username)
+            ==
+            convertToLower(username))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+void loadBooksFromFile()
+{
+    ifstream file("books.txt");
+
+    if (!file)
+    {
+        return;
+    }
+
+    while (true)
+    {
+        BookNode* newBook =
+        new BookNode();
+
+        string availability;
+
+        file >> newBook->bookID;
+
+        if (file.fail())
+        {
+            delete newBook;
+
+            break;
+        }
+
+        file.ignore();
+
+        getline(file,
+                newBook->bookTitle,
+                ',');
+
+        getline(file,
+                newBook->authorName,
+                ',');
+
+        getline(file,
+                availability);
+
+        newBook->isAvailable =
+        stoi(availability);
+
+        sortedBookIDs[totalBooks] =
+        newBook->bookID;
+
+        totalBooks++;
+
+        if (firstBook == NULL)
+        {
+            firstBook = newBook;
+        }
+        else
+        {
+            BookNode* temp = firstBook;
+
+            while (temp->next != NULL)
+            {
+                temp = temp->next;
+            }
+
+            temp->next = newBook;
+        }
     }
 
     file.close();
