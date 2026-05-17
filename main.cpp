@@ -178,9 +178,43 @@ void searchBookByID()
 
         if (sortedBookIDs[middle] == targetID)
         {
-            cout << "Book Found." << endl;
+            BookNode* temp = firstBook;
 
-            return;
+            while (temp != NULL)
+            {
+                if (temp->bookID == targetID)
+                {
+                    cout << "------------------"
+                         << endl;
+
+                    cout << "Book ID: "
+                         << temp->bookID
+                         << endl;
+
+                    cout << "Title: "
+                         << temp->bookTitle
+                         << endl;
+
+                    cout << "Author: "
+                         << temp->authorName
+                         << endl;
+
+                    if (temp->isAvailable)
+                    {
+                        cout << "Status: Available"
+                             << endl;
+                    }
+                    else
+                    {
+                        cout << "Status: Borrowed"
+                             << endl;
+                    }
+
+                    return;
+                }
+
+                temp = temp->next;
+            }
         }
 
         else if (sortedBookIDs[middle] < targetID)
@@ -194,7 +228,8 @@ void searchBookByID()
         }
     }
 
-    cout << "Book not found." << endl;
+    cout << "Book not found."
+         << endl;
 }
 void searchBookByTitle()
 {
@@ -206,16 +241,35 @@ void searchBookByTitle()
 
     getline(cin, keyword);
 
+    keyword =
+    convertToLower(keyword);
+
     bool found = false;
 
     BookNode* temp = firstBook;
 
     while (temp != NULL)
     {
-        if (temp->bookTitle.find(keyword)
+        string title =
+        convertToLower(
+        temp->bookTitle);
+
+        if (title.find(keyword)
             != string::npos)
         {
-            cout << temp->bookTitle
+            cout << "------------------"
+                 << endl;
+
+            cout << "Book ID: "
+                 << temp->bookID
+                 << endl;
+
+            cout << "Title: "
+                 << temp->bookTitle
+                 << endl;
+
+            cout << "Author: "
+                 << temp->authorName
                  << endl;
 
             found = true;
@@ -229,6 +283,15 @@ void searchBookByTitle()
         cout << "Book not found."
              << endl;
     }
+}
+string convertToLower(string text)
+{
+    for (int i = 0; i < text.length(); i++)
+    {
+        text[i] = tolower(text[i]);
+    }
+
+    return text;
 }
 };
 
