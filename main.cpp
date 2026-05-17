@@ -134,6 +134,40 @@ public:
 
 
     }
+    bool isBookIDFound(int id)
+{
+    BookNode* temp = firstBook;
+
+    while (temp != NULL)
+    {
+        if (temp->bookID == id)
+        {
+            return true;
+        }
+
+        temp = temp->next;
+    }
+
+    return false;
+}
+bool isBookTitleFound(string title)
+{
+    BookNode* temp = firstBook;
+
+    while (temp != NULL)
+    {
+        if (convertToLower(temp->bookTitle)
+            ==
+            convertToLower(title))
+        {
+            return true;
+        }
+
+        temp = temp->next;
+    }
+
+    return false;
+}
 bool containsNumber(string text)
 {
     for (int i = 0; i < text.length(); i++)
@@ -146,7 +180,7 @@ bool containsNumber(string text)
 
     return false;
 }
-   void addBook()
+  void addBook()
 {
     BookNode* newBook =
     new BookNode();
@@ -154,6 +188,16 @@ bool containsNumber(string text)
     cout << "Enter Book ID: ";
 
     cin >> newBook->bookID;
+
+    if (isBookIDFound(newBook->bookID))
+    {
+        cout << "Book ID Already Exists."
+             << endl;
+
+        delete newBook;
+
+        return;
+    }
 
     cin.ignore();
 
@@ -166,6 +210,17 @@ bool containsNumber(string text)
         newBook->bookTitle))
     {
         cout << "Enter Text Only."
+             << endl;
+
+        delete newBook;
+
+        return;
+    }
+
+    if (isBookTitleFound(
+        newBook->bookTitle))
+    {
+        cout << "Book Title Already Exists."
              << endl;
 
         delete newBook;
@@ -779,6 +834,7 @@ void saveUsersToFile()
 
     file.close();
 }
+
 };
 
 
