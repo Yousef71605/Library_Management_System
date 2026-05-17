@@ -165,9 +165,109 @@ sortedBookIDs[totalBooks] = newBook->bookID;
 
 totalBooks++;
         recentlyAddedBooks.push(newBook->bookTitle);
+        saveBooksToFile();
         cout << "Book Added Successfully.\n";
     }
+void deleteBook()
+{
+    int id;
 
+    cout << "Enter Book ID: ";
+
+    cin >> id;
+
+    if (firstBook == NULL)
+    {
+        cout << "No Books Found."
+             << endl;
+
+        return;
+    }
+
+    if (firstBook->bookID == id)
+    {
+        BookNode* del = firstBook;
+
+        firstBook = firstBook->next;
+
+        delete del;
+
+        saveBooksToFile();
+
+        cout << "Book Deleted Successfully."
+             << endl;
+
+        return;
+    }
+
+    BookNode* temp = firstBook;
+
+    while (temp->next != NULL
+           &&
+           temp->next->bookID != id)
+    {
+        temp = temp->next;
+    }
+
+    if (temp->next == NULL)
+    {
+        cout << "Book Not Found."
+             << endl;
+
+        return;
+    }
+
+    BookNode* del = temp->next;
+
+    temp->next = temp->next->next;
+
+    delete del;
+
+    saveBooksToFile();
+
+    cout << "Book Deleted Successfully."
+         << endl;
+}
+void updateBook()
+{
+    int id;
+
+    cout << "Enter Book ID: ";
+
+    cin >> id;
+
+    cin.ignore();
+
+    BookNode* temp = firstBook;
+
+    while (temp != NULL)
+    {
+        if (temp->bookID == id)
+        {
+            cout << "Enter New Title: ";
+
+            getline(cin,
+                    temp->bookTitle);
+
+            cout << "Enter New Author: ";
+
+            getline(cin,
+                    temp->authorName);
+
+            saveBooksToFile();
+
+            cout << "Book Updated Successfully."
+                 << endl;
+
+            return;
+        }
+
+        temp = temp->next;
+    }
+
+    cout << "Book Not Found."
+         << endl;
+}
     void displayBooks()
     {
         BookNode* temp = firstBook;
@@ -439,7 +539,25 @@ void changeUserPassword(int userIndex)
     cout << "Password Changed Successfully."
          << endl;
 }
+void saveBooksToFile()
+{
+    ofstream file("books.txt");
 
+    BookNode* temp = firstBook;
+
+    while (temp != NULL)
+    {
+        file << temp->bookID << ",";
+        file << temp->bookTitle << ",";
+        file << temp->authorName << ",";
+        file << temp->isAvailable
+             << endl;
+
+        temp = temp->next;
+    }
+
+    file.close();
+}
 };
 
 int main()
@@ -492,13 +610,13 @@ int main()
                 cout << "1. Add Book"
                      << endl;
 
-                cout << "2. Display Books"
+                cout << "2. Delete Book"
                      << endl;
 
-                cout << "3. Search Book By ID"
+                cout << "3. Update Book"
                      << endl;
 
-                cout << "4. Search Book By Title"
+                cout << "4. Display Books"
                      << endl;
 
                 cout << "5. Back"
@@ -515,17 +633,17 @@ int main()
 
                 else if (adminChoice == 2)
                 {
-                    library.displayBooks();
+                    library.deleteBook();
                 }
 
                 else if (adminChoice == 3)
                 {
-                    library.searchBookByID();
+                    library.updateBook();
                 }
 
                 else if (adminChoice == 4)
                 {
-                    library.searchBookByTitle();
+                    library.displayBooks();
                 }
 
             } while (adminChoice != 5);
@@ -590,16 +708,25 @@ int main()
                             cout << "========================"
                                  << endl;
 
-                            cout << "1. Borrow Book"
+                            cout << "1. Display Books"
                                  << endl;
 
-                            cout << "2. Return Book"
+                            cout << "2. Search Book By ID"
                                  << endl;
 
-                            cout << "3. Change Password"
+                            cout << "3. Search Book By Title"
                                  << endl;
 
-                            cout << "4. Logout"
+                            cout << "4. Borrow Book"
+                                 << endl;
+
+                            cout << "5. Return Book"
+                                 << endl;
+
+                            cout << "6. Change Password"
+                                 << endl;
+
+                            cout << "7. Logout"
                                  << endl;
 
                             cout << "Enter Choice: ";
@@ -608,20 +735,35 @@ int main()
 
                             if (userChoice == 1)
                             {
-                                library.borrowBook(userIndex);
+                                library.displayBooks();
                             }
 
                             else if (userChoice == 2)
                             {
-                                library.returnBook();
+                                library.searchBookByID();
                             }
 
                             else if (userChoice == 3)
                             {
+                                library.searchBookByTitle();
+                            }
+
+                            else if (userChoice == 4)
+                            {
+                                library.borrowBook(userIndex);
+                            }
+
+                            else if (userChoice == 5)
+                            {
+                                library.returnBook();
+                            }
+
+                            else if (userChoice == 6)
+                            {
                                 library.changeUserPassword(userIndex);
                             }
 
-                        } while (userChoice != 4);
+                        } while (userChoice != 7);
                     }
                 }
 
