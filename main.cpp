@@ -26,6 +26,30 @@ public:
             books[top] = book;
         }
     }
+    void pop()
+{
+    if (top != -1)
+    {
+        top--;
+    }
+}
+void displayStack()
+{
+    if (top == -1)
+    {
+        cout << "Stack is Empty."
+             << endl;
+
+        return;
+    }
+
+    for (int i = top; i >= 0; i--)
+    {
+        cout << books[i]
+             << endl;
+    }
+}
+
 };
 class Queue
 {
@@ -53,6 +77,29 @@ public:
             books[rear] = book;
         }
     }
+    void dequeue()
+{
+    if (front <= rear)
+    {
+        front++;
+    }
+}
+void displayQueue()
+{
+    if (front > rear)
+    {
+        cout << "Queue is Empty."
+             << endl;
+
+        return;
+    }
+
+    for (int i = front; i <= rear; i++)
+    {
+        cout << books[i]
+             << endl;
+    }
+}
 };
 class BookTreeNode
 {
@@ -464,6 +511,20 @@ else
     }
 
     return node;
+}
+void displayRecentlyAddedBooks()
+{
+    cout << "Recently Added Books:"
+         << endl;
+
+    recentlyAddedBooks.displayStack();
+}
+void displayBorrowedBooks()
+{
+    cout << "Borrowed Books Queue:"
+         << endl;
+
+    borrowedBooksQueue.displayQueue();
 }
 void selectionSortIDs()
 {
@@ -1002,7 +1063,13 @@ int main()
                 cout << "5. Sort Books By ID"
                      << endl;
 
-                cout << "6. Back"
+                cout << "6. Display Recently Added Books"
+                     << endl;
+
+                cout << "7. Display Borrowed Books"
+                     << endl;
+
+                cout << "8. Back"
                      << endl;
 
                 cout << "Enter Choice: ";
@@ -1034,7 +1101,17 @@ int main()
                     library.sortBooksByID();
                 }
 
-            } while (adminChoice != 6);
+                else if (adminChoice == 6)
+                {
+                    library.displayRecentlyAddedBooks();
+                }
+
+                else if (adminChoice == 7)
+                {
+                    library.displayBorrowedBooks();
+                }
+
+            } while (adminChoice != 8);
         }
 
         // ================= USER =================
@@ -1067,14 +1144,10 @@ int main()
 
                 cin >> userMenuChoice;
 
-                // CREATE ACCOUNT
-
                 if (userMenuChoice == 1)
                 {
                     library.createUserAccount();
                 }
-
-                // LOGIN
 
                 else if (userMenuChoice == 2)
                 {
