@@ -228,6 +228,30 @@ bool containsNumber(string text)
 
     return false;
 }
+bool searchInBST(BookTreeNode* node,int id)
+                 
+{
+    if (node == NULL)
+    {
+        return false;
+    }
+
+    if (node->bookID == id)
+    {
+        return true;
+    }
+
+    if (id < node->bookID)
+    {
+        return searchInBST(
+               node->left,
+               id);
+    }
+
+    return searchInBST(
+           node->right,
+           id);
+}
   void addBook()
 {
     BookNode* newBook =
@@ -554,6 +578,14 @@ void searchBookByID()
     cout << "Enter Book ID: ";
 
     cin >> targetID;
+    if (!searchInBST(bookTreeRoot, targetID))
+                
+{
+    cout << "Book not found."
+         << endl;
+
+    return;
+}
 
     int left = 0;
     int right = totalBooks - 1;
