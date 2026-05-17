@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cctype>
 #include <fstream>
 #include <string>
 
@@ -133,44 +134,95 @@ public:
 
 
     }
-
-    void addBook()
+bool containsNumber(string text)
+{
+    for (int i = 0; i < text.length(); i++)
     {
-        BookNode* newBook = new BookNode();
-
-        cout << "Enter Book ID: ";
-        cin >> newBook->bookID;
-
-        cin.ignore();
-
-        cout << "Enter Book Title: ";
-        getline(cin, newBook->bookTitle);
-
-        cout << "Enter Author Name: ";
-        getline(cin, newBook->authorName);
-
-        if (firstBook == NULL)
+        if (isdigit(text[i]))
         {
-            firstBook = newBook;
+            return true;
         }
-        else
-        {
-            BookNode* temp = firstBook;
-
-            while (temp->next != NULL)
-            {
-                temp = temp->next;
-            }
-
-            temp->next = newBook;
-        }
-sortedBookIDs[totalBooks] = newBook->bookID;
-
-totalBooks++;
-        recentlyAddedBooks.push(newBook->bookTitle);
-        saveBooksToFile();
-        cout << "Book Added Successfully.\n";
     }
+
+    return false;
+}
+   void addBook()
+{
+    BookNode* newBook =
+    new BookNode();
+
+    cout << "Enter Book ID: ";
+
+    cin >> newBook->bookID;
+
+    cin.ignore();
+
+    cout << "Enter Book Title: ";
+
+    getline(cin,
+            newBook->bookTitle);
+
+    if (containsNumber(
+        newBook->bookTitle))
+    {
+        cout << "Enter Text Only."
+             << endl;
+
+        delete newBook;
+
+        return;
+    }
+
+    cout << "Enter Author Name: ";
+
+    getline(cin,
+            newBook->authorName);
+
+    if (containsNumber(
+        newBook->authorName))
+    {
+        cout << "Enter Text Only."
+             << endl;
+
+        delete newBook;
+
+        return;
+    }
+
+    if (firstBook == NULL)
+    {
+        firstBook = newBook;
+    }
+    else
+    {
+        BookNode* temp = firstBook;
+
+        while (temp->next != NULL)
+        {
+            temp = temp->next;
+        }
+
+        temp->next = newBook;
+    }
+
+    sortedBookIDs[totalBooks] =
+    newBook->bookID;
+
+    totalBooks++;
+
+    recentlyAddedBooks.push(
+    newBook->bookTitle);
+
+    bookTreeRoot =
+    insertIntoBST(bookTreeRoot,
+                  newBook->bookID,
+                  newBook->bookTitle);
+
+    saveBooksToFile();
+
+    cout << "Book Added Successfully."
+         << endl;
+}
 void deleteBook()
 {
     int id;
@@ -287,10 +339,50 @@ void updateBook()
 
             cout << "Author: "
                  << temp->authorName << endl;
+                 if (temp->isAvailable)
+{
+  
+          cout << "Status: Available"
+            << endl;
+}
+else
+{
+    cout << "Status: Borrowed"
+         << endl;
+}
 
             temp = temp->next;
         }
     }
+    void sortBooksByID()
+{
+    for (BookNode* i = firstBook;
+         i != NULL;
+         i = i->next)
+    {
+        for (BookNode* j = i->next;
+             j != NULL;
+             j = j->next)
+        {
+            if (i->bookID > j->bookID)
+            {
+                swap(i->bookID, j->bookID);
+
+                swap(i->bookTitle,
+                     j->bookTitle);
+
+                swap(i->authorName,
+                     j->authorName);
+
+                swap(i->isAvailable,
+                     j->isAvailable);
+            }
+        }
+    }
+
+    cout << "Books Sorted Successfully."
+         << endl;
+}
     BookTreeNode* insertIntoBST(BookTreeNode* node,
                             int id,
                             string title)
@@ -488,6 +580,13 @@ void createUserAccount()
 
     getline(cin,
             users[totalUsers].username);
+            if (containsNumber(users[totalUsers].username))
+{
+    cout << "Enter Text Only."
+         << endl;
+
+    return;
+}
 
     cout << "Enter Password: ";
 
@@ -717,6 +816,20 @@ int main()
 
         if (mainChoice == 1)
         {
+            string adminPassword;
+
+            cout << "Enter Admin Password: ";
+
+            cin >> adminPassword;
+
+            if (adminPassword != "library")
+            {
+                cout << "Wrong Password."
+                     << endl;
+
+                continue;
+            }
+
             int adminChoice;
 
             do
@@ -742,7 +855,10 @@ int main()
                 cout << "4. Display Books"
                      << endl;
 
-                cout << "5. Back"
+                cout << "5. Sort Books By ID"
+                     << endl;
+
+                cout << "6. Back"
                      << endl;
 
                 cout << "Enter Choice: ";
@@ -769,7 +885,12 @@ int main()
                     library.displayBooks();
                 }
 
-            } while (adminChoice != 5);
+                else if (adminChoice == 5)
+                {
+                    library.sortBooksByID();
+                }
+
+            } while (adminChoice != 6);
         }
 
         // ================= USER =================
