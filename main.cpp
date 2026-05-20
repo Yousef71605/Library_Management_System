@@ -6,12 +6,12 @@
 using namespace std;
 class Stack
 {
-private:
+public:
     string books[100];
 
     int top;
 
-public:
+
     Stack()
     {
         top = -1;
@@ -27,14 +27,14 @@ public:
         
     }
 
-    void pop()
+    string pop()
 {
     if (top == -1)
     {
         cout << "Stack is Empty."
              << endl;
 
-        return;
+        return "";
     }
     string value =books[top];
     top--;
@@ -60,14 +60,14 @@ void displayStack()
 };
 class Queue
 {
-private:
+public:
     string books[100];
 
     int front;
 
     int rear;
 
-public:
+
     Queue()
     {
         front = -1;
@@ -76,7 +76,7 @@ public:
     }
 
     void enqueue(string book)
-    {
+      {
         if(rear==99){
             cout<<"Overflow "<<endl;
         }else
@@ -85,11 +85,12 @@ public:
        front=0;
             rear++;
             books[rear]=book;
-    }
-        int deQueue() {
+        }
+      }
+    string deQueue() {
     if (front == -1 || front > rear) {
         cout << "Underflow" << endl;
-        return -1;
+        return "";
     } else {
         string val = books[front];
         front++;
@@ -99,7 +100,7 @@ public:
 
 void displayQueue()
 {
-    if (front > rear)
+    if (front == -1 || front > rear)
     {
         cout << "Queue is Empty."
              << endl;
@@ -269,7 +270,15 @@ bool searchInBST(BookTreeNode* node,int id)
 {
     BookNode* newBook =
     new BookNode();
+   if (totalBooks >= 100)
+{
+    cout << "Library is full."
+         << endl;
 
+    delete newBook;
+
+    return;
+}
     cout << "Enter Book ID: ";
 
     cin >> newBook->bookID;
@@ -379,6 +388,7 @@ void deleteBook()
         return;
     }
 
+   
     if (firstBook->bookID == id)
     {
         BookNode* del = firstBook;
@@ -386,7 +396,28 @@ void deleteBook()
         firstBook = firstBook->next;
 
         delete del;
-       bookTreeRoot=deleteFromBST(bookTreeRoot,id);
+
+        totalBooks--;
+
+       
+        for (int i = 0; i < totalBooks; i++)
+        {
+            if (sortedBookIDs[i] == id)
+            {
+                for (int j = i; j < totalBooks; j++)
+                {
+                    sortedBookIDs[j] =
+                    sortedBookIDs[j + 1];
+                }
+
+                break;
+            }
+        }
+
+       
+        bookTreeRoot =
+        deleteFromBST(bookTreeRoot, id);
+
         saveBooksToFile();
 
         cout << "Book Deleted Successfully."
@@ -395,6 +426,7 @@ void deleteBook()
         return;
     }
 
+    
     BookNode* temp = firstBook;
 
     while (temp->next != NULL
@@ -417,6 +449,27 @@ void deleteBook()
     temp->next = temp->next->next;
 
     delete del;
+
+    totalBooks--;
+
+    
+    for (int i = 0; i < totalBooks; i++)
+    {
+        if (sortedBookIDs[i] == id)
+        {
+            for (int j = i; j < totalBooks; j++)
+            {
+                sortedBookIDs[j] =
+                sortedBookIDs[j + 1];
+            }
+
+            break;
+        }
+    }
+
+   
+    bookTreeRoot =
+    deleteFromBST(bookTreeRoot, id);
 
     saveBooksToFile();
 
@@ -465,6 +518,13 @@ void updateBook()
 }
     void displayBooks()
     {
+        if (firstBook == NULL)
+    {
+        cout << "No Books Found."
+             << endl;
+
+        return;
+    }
         BookNode* temp = firstBook;
 
         while (temp != NULL)
@@ -557,6 +617,13 @@ void displayRecentlyAddedBooks()
 {
     cout << "Recently Added Books:"
          << endl;
+     if (recentlyAddedBooks.top == -1)
+    {
+        cout << "No books added."
+             << endl;
+
+        return;
+    }
 
     recentlyAddedBooks.displayStack();
 }
@@ -564,7 +631,13 @@ void displayBorrowedBooks()
 {
     cout << "Borrowed Books Queue:"
          << endl;
+ if (borrowedBooksQueue. front == -1 ||borrowedBooksQueue. front > borrowedBooksQueue.rear)
+    {
+        cout << "No books borrowed."
+             << endl;
 
+        return;
+    }
     borrowedBooksQueue.displayQueue();
 }
 void selectionSortIDs()
@@ -742,6 +815,13 @@ string convertToLower(string text)
 }
 void createUserAccount()
 {
+    if (totalUsers >= 100)
+{
+    cout << "User limit reached."
+         << endl;
+
+    return;
+}
     cout << "Enter Username: ";
 
     cin.ignore();
@@ -822,8 +902,7 @@ void borrowBook(int userIndex)
         {
             if (temp->isAvailable)
             {
-                temp->isAvailable = false;
-                saveBooksToFile();
+               
           if (users[userIndex].borrowedCount >= 10)
            {
           cout << "Borrow limit reached."
@@ -831,6 +910,8 @@ void borrowBook(int userIndex)
 
          return;
            }
+              temp->isAvailable = false;
+                saveBooksToFile();   
                 users[userIndex]
                 .borrowedBooks[
                 users[userIndex]
@@ -839,7 +920,7 @@ void borrowBook(int userIndex)
 
                 users[userIndex]
                 .borrowedCount++;
-
+               saveUsersToFile();
                 borrowedBooksQueue.enqueue(
                 temp->bookTitle);
 
@@ -861,7 +942,8 @@ void borrowBook(int userIndex)
 
     cout << "Book Not Found."
          << endl;
-}void returnBook()
+}
+void returnBook(int userIndex)
 {
     int id;
 
@@ -876,14 +958,48 @@ void borrowBook(int userIndex)
         if (temp->bookID == id)
         {
             if (temp->isAvailable)
-           {
-        cout << "Book is already available."
-         << endl;
+            {
+                cout << "Book is already available."
+                     << endl;
 
-        return;
-          }
-            temp->isAvailable = true;
+                return;
+            }
+        
+            bool found = false;
+            
+            for (int i = 0; i < users[userIndex].borrowedCount; i++)
+            {
+                if (users[userIndex].borrowedBooks[i]
+                    == temp->bookTitle)
+                {
+                    found = true;
+
+                    
+                    for (int j = i;
+                         j < users[userIndex].borrowedCount - 1;
+                         j++)
+                    {
+                        users[userIndex].borrowedBooks[j]
+                        =
+                        users[userIndex].borrowedBooks[j + 1];
+                    }
+
+                    users[userIndex].borrowedCount--;
+                    saveUsersToFile();
+                    break;
+                }
+            }
+
+            if (!found)
+            {
+                cout << "This user did not borrow this book."
+                     << endl;
+
+                return;
+            }
+        temp->isAvailable = true;
             saveBooksToFile();
+
             cout << "Book Returned Successfully."
                  << endl;
 
@@ -1358,7 +1474,7 @@ int main()
 
                             else if (userChoice == 5)
                             {
-                                library.returnBook();
+                                library.returnBook(userIndex);
                             }
 
                             else if (userChoice == 6)
