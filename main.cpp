@@ -17,21 +17,28 @@ public:
         top = -1;
     }
 
-    void push(string book)
-    {
-        if (top < 99)
-        {
-            top++;
-
-            books[top] = book;
+       void push(string book) {
+        if (top == 99) {
+            cout << "Stack Overflow!" << endl;
+            return;
         }
+           top++;
+        books[top] = book;
+        
     }
+
     void pop()
 {
-    if (top != -1)
+    if (top == -1)
     {
-        top--;
+        cout << "Stack is Empty."
+             << endl;
+
+        return;
     }
+    string value =books[top];
+    top--;
+    return value;
 }
 void displayStack()
 {
@@ -63,27 +70,33 @@ private:
 public:
     Queue()
     {
-        front = 0;
+        front = -1;
 
         rear = -1;
     }
 
     void enqueue(string book)
     {
-        if (rear < 99)
+        if(rear==99){
+            cout<<"Overflow "<<endl;
+        }else
         {
+        if (front==-1)
+       front=0;
             rear++;
-
-            books[rear] = book;
-        }
+            books[rear]=book;
     }
-    void dequeue()
-{
-    if (front <= rear)
-    {
+        int deQueue() {
+    if (front == -1 || front > rear) {
+        cout << "Underflow" << endl;
+        return -1;
+    } else {
+        string val = books[front];
         front++;
+        return val;
     }
 }
+
 void displayQueue()
 {
     if (front > rear)
@@ -481,7 +494,7 @@ else
             temp = temp->next;
         }
     }
-    void sortBooksByID()
+   void sortBooksByID()
 {
     for (BookNode* i = firstBook;
          i != NULL;
@@ -493,16 +506,20 @@ else
         {
             if (i->bookID > j->bookID)
             {
-                swap(i->bookID, j->bookID);
+                int tempID = i->bookID;
+                string tempTitle = i->bookTitle;
+                string tempAuthor = i->authorName;
+                bool tempAvailable = i->isAvailable;
+                
+                i->bookID = j->bookID;
+                i->bookTitle = j->bookTitle;
+                i->authorName = j->authorName;
+                i->isAvailable = j->isAvailable;
 
-                swap(i->bookTitle,
-                     j->bookTitle);
-
-                swap(i->authorName,
-                     j->authorName);
-
-                swap(i->isAvailable,
-                     j->isAvailable);
+                j->bookID = tempID;
+                j->bookTitle = tempTitle;
+                j->authorName = tempAuthor;
+                j->isAvailable = tempAvailable;
             }
         }
     }
@@ -565,8 +582,10 @@ void selectionSortIDs()
             }
         }
 
-        swap(sortedBookIDs[i],
-             sortedBookIDs[minIndex]);
+     
+        int temp = sortedBookIDs[i];
+        sortedBookIDs[i] = sortedBookIDs[minIndex];
+        sortedBookIDs[minIndex] = temp;
     }
 }
 void searchBookByID()
@@ -1049,7 +1068,7 @@ BookTreeNode* deleteFromBST(BookTreeNode* node, int id)
 
     else
     {
-        // الحالة 1: بدون أبناء
+        
         if (node->left == NULL
             &&
             node->right == NULL)
@@ -1059,7 +1078,7 @@ BookTreeNode* deleteFromBST(BookTreeNode* node, int id)
             return NULL;
         }
 
-        // الحالة 2: ابن واحد
+       
         else if (node->left == NULL)
         {
             BookTreeNode* temp =
@@ -1080,7 +1099,7 @@ BookTreeNode* deleteFromBST(BookTreeNode* node, int id)
             return temp;
         }
 
-        // الحالة 3: ابنان
+        
         else
         {
             BookTreeNode* successor =
