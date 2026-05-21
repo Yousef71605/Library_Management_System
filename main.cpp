@@ -454,6 +454,8 @@ void deleteBook()
                 {
                     sortedBookIDs[j] =
                     sortedBookIDs[j + 1];
+                     sortedTitles[j] =
+                    sortedTitles[j + 1];
                 }
 
                 break;
@@ -507,6 +509,8 @@ void deleteBook()
             {
                 sortedBookIDs[j] =
                 sortedBookIDs[j + 1];
+                sortedTitles[j] =
+                    sortedTitles[j + 1];
             }
 
             break;
@@ -1205,6 +1209,8 @@ void loadBooksFromFile()
 
         sortedBookIDs[totalBooks] =
         newBook->bookID;
+        sortedTitles [totalBooks] =
+        newBook->bookTitle;
 
         totalBooks++;
         bookTreeRoot=insertIntoBST(bookTreeRoot,newBook->bookID,newBook->bookTitle);
