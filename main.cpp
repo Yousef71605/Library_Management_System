@@ -11,52 +11,69 @@ public:
 
     int top;
 
-
     Stack()
     {
         top = -1;
     }
 
-       void push(string book) {
-        if (top == 99) {
-            cout << "Stack Overflow!" << endl;
+    bool isEmpty()
+    {
+        return top == -1;
+    }
+
+    bool isFull()
+    {
+        return top == 99;
+    }
+
+    void push(string book)
+    {
+        if (isFull())
+        {
+            cout << "Stack Overflow!"
+                 << endl;
+
             return;
         }
-           top++;
+
+        top++;
+
         books[top] = book;
-        
     }
 
     string pop()
-{
-    if (top == -1)
     {
-        cout << "Stack is Empty."
-             << endl;
+        if (isEmpty())
+        {
+            cout << "Stack is Empty."
+                 << endl;
 
-        return "";
-    }
-    string value =books[top];
-    top--;
-    return value;
-}
-void displayStack()
-{
-    if (top == -1)
-    {
-        cout << "Stack is Empty."
-             << endl;
+            return "";
+        }
 
-        return;
+        string value = books[top];
+
+        top--;
+
+        return value;
     }
 
-    for (int i = top; i >= 0; i--)
+    void displayStack()
     {
-        cout << books[i]
-             << endl;
-    }
-}
+        if (isEmpty())
+        {
+            cout << "Stack is Empty."
+                 << endl;
 
+            return;
+        }
+
+        for (int i = top; i >= 0; i--)
+        {
+            cout << books[i]
+                 << endl;
+        }
+    }
 };
 class Queue
 {
@@ -67,53 +84,80 @@ public:
 
     int rear;
 
-
     Queue()
     {
         front = -1;
-
         rear = -1;
     }
 
+    bool isEmpty()
+    {
+        return front == -1 || front > rear;
+    }
+
+    bool isFull()
+    {
+        return rear == 99;
+    }
+
     void enqueue(string book)
-      {
-        if(rear==99){
-            cout<<"Overflow "<<endl;
-        }else
+    {
+        if (isFull())
         {
-        if (front==-1)
-       front=0;
-            rear++;
-            books[rear]=book;
+            cout << "Queue Overflow."
+                 << endl;
+
+            return;
         }
-      }
-    string deQueue() {
-    if (front == -1 || front > rear) {
-        cout << "Underflow" << endl;
-        return "";
-    } else {
+
+        if (front == -1)
+        {
+            front = 0;
+        }
+
+        rear++;
+
+        books[rear] = book;
+    }
+
+    string deQueue()
+    {
+        if (isEmpty())
+        {
+            cout << "Queue Underflow."
+                 << endl;
+
+            return "";
+        }
+
         string val = books[front];
+
         front++;
+
+        if (front > rear)
+        {
+            front = rear = -1;
+        }
+
         return val;
     }
-}
 
-void displayQueue()
-{
-    if (front == -1 || front > rear)
+    void displayQueue()
     {
-        cout << "Queue is Empty."
-             << endl;
+        if (isEmpty())
+        {
+            cout << "Queue is Empty."
+                 << endl;
 
-        return;
-    }
+            return;
+        }
 
-    for (int i = front; i <= rear; i++)
-    {
-        cout << books[i]
-             << endl;
+        for (int i = front; i <= rear; i++)
+        {
+            cout << books[i]
+                 << endl;
+        }
     }
-}
 };
 class BookTreeNode
 {
@@ -176,6 +220,7 @@ private:
     int totalBooks;
 
 int sortedBookIDs[100];
+string sortedTitles[100];
 LibraryUser users[100];
 
 int totalUsers;
@@ -356,7 +401,8 @@ bool searchInBST(BookTreeNode* node,int id)
 
     sortedBookIDs[totalBooks] =
     newBook->bookID;
-
+     sortedTitles[totalBooks] =
+    newBook->bookTitle;
     totalBooks++;
 
     recentlyAddedBooks.push(
@@ -496,7 +542,9 @@ void updateBook()
 
             getline(cin,
                     temp->bookTitle);
-
+        updateBSTTitle(bookTreeRoot,
+               id,
+               temp->bookTitle);
             cout << "Enter New Author: ";
 
             getline(cin,
@@ -515,6 +563,34 @@ void updateBook()
 
     cout << "Book Not Found."
          << endl;
+}
+void updateBSTTitle(BookTreeNode* node,
+                    int id,
+                    string newTitle)
+{
+    if (node == NULL)
+    {
+        return;
+    }
+
+    if (node->bookID == id)
+    {
+        node->bookTitle = newTitle;
+        return;
+    }
+
+    if (id < node->bookID)
+    {
+        updateBSTTitle(node->left,
+                       id,
+                       newTitle);
+    }
+    else
+    {
+        updateBSTTitle(node->right,
+                       id,
+                       newTitle);
+    }
 }
     void displayBooks()
     {
@@ -554,39 +630,7 @@ else
             temp = temp->next;
         }
     }
-   void sortBooksByID()
-{
-    for (BookNode* i = firstBook;
-         i != NULL;
-         i = i->next)
-    {
-        for (BookNode* j = i->next;
-             j != NULL;
-             j = j->next)
-        {
-            if (i->bookID > j->bookID)
-            {
-                int tempID = i->bookID;
-                string tempTitle = i->bookTitle;
-                string tempAuthor = i->authorName;
-                bool tempAvailable = i->isAvailable;
-                
-                i->bookID = j->bookID;
-                i->bookTitle = j->bookTitle;
-                i->authorName = j->authorName;
-                i->isAvailable = j->isAvailable;
-
-                j->bookID = tempID;
-                j->bookTitle = tempTitle;
-                j->authorName = tempAuthor;
-                j->isAvailable = tempAvailable;
-            }
-        }
-    }
-
-    cout << "Books Sorted Successfully."
-         << endl;
-}
+  
     BookTreeNode* insertIntoBST(BookTreeNode* node,
                             int id,
                             string title)
@@ -617,7 +661,7 @@ void displayRecentlyAddedBooks()
 {
     cout << "Recently Added Books:"
          << endl;
-     if (recentlyAddedBooks.top == -1)
+     if (recentlyAddedBooks.isEmpty())
     {
         cout << "No books added."
              << endl;
@@ -631,7 +675,7 @@ void displayBorrowedBooks()
 {
     cout << "Borrowed Books Queue:"
          << endl;
- if (borrowedBooksQueue. front == -1 ||borrowedBooksQueue. front > borrowedBooksQueue.rear)
+ if (borrowedBooksQueue.isEmpty())
     {
         cout << "No books borrowed."
              << endl;
@@ -660,24 +704,101 @@ void selectionSortIDs()
         sortedBookIDs[i] = sortedBookIDs[minIndex];
         sortedBookIDs[minIndex] = temp;
     }
+    cout<<"Book Sorted Successfully. "<<endl;
 }
 void searchBookByID()
 {
-    selectionSortIDs();
-
     int targetID;
 
     cout << "Enter Book ID: ";
 
     cin >> targetID;
-    if (!searchInBST(bookTreeRoot, targetID))
-                
-{
-    cout << "Book not found."
-         << endl;
 
-    return;
+    if (!searchInBST(bookTreeRoot,
+                     targetID))
+    {
+        cout << "Book not found."
+             << endl;
+
+        return;
+    }
+
+    BookNode* temp = firstBook;
+
+    while (temp != NULL)
+    {
+        if (temp->bookID == targetID)
+        {
+            cout << "------------------"
+                 << endl;
+
+            cout << "Book ID: "
+                 << temp->bookID
+                 << endl;
+
+            cout << "Title: "
+                 << temp->bookTitle
+                 << endl;
+
+            cout << "Author: "
+                 << temp->authorName
+                 << endl;
+
+            if (temp->isAvailable)
+            {
+                cout << "Status: Available"
+                     << endl;
+            }
+            else
+            {
+                cout << "Status: Borrowed"
+                     << endl;
+            }
+
+            return;
+        }
+
+        temp = temp->next;
+    }
 }
+void bubbleSortTitles()
+{
+    for (int i = 0;
+         i < totalBooks - 1;
+         i++)
+    {
+        for (int j = 0;
+             j < totalBooks - i - 1;
+             j++)
+        {
+            if (convertToLower(sortedTitles[j])
+                >
+                convertToLower(sortedTitles[j + 1]))
+            {
+                string temp =
+                sortedTitles[j];
+
+                sortedTitles[j] =
+                sortedTitles[j + 1];
+
+                sortedTitles[j + 1] =
+                temp;
+            }
+        }
+    }
+}
+void searchBookByTitle()
+{
+     bubbleSortTitles();
+    string target;
+
+    cin.ignore();
+
+    cout << "Enter Book Title: ";
+
+    getline(cin, target);
+
+    target = convertToLower(target);
 
     int left = 0;
     int right = totalBooks - 1;
@@ -686,13 +807,19 @@ void searchBookByID()
     {
         int middle = (left + right) / 2;
 
-        if (sortedBookIDs[middle] == targetID)
+        string middleTitle =
+        convertToLower(
+        sortedTitles[middle]);
+
+        if (middleTitle == target)
         {
             BookNode* temp = firstBook;
 
             while (temp != NULL)
             {
-                if (temp->bookID == targetID)
+                if (convertToLower(
+                    temp->bookTitle)
+                    == target)
                 {
                     cout << "------------------"
                          << endl;
@@ -727,7 +854,7 @@ void searchBookByID()
             }
         }
 
-        else if (sortedBookIDs[middle] < targetID)
+        else if (middleTitle < target)
         {
             left = middle + 1;
         }
@@ -740,69 +867,6 @@ void searchBookByID()
 
     cout << "Book not found."
          << endl;
-}
-void searchBookByTitle()
-{
-    string keyword;
-
-    cin.ignore();
-
-    cout << "Enter Book Title: ";
-
-    getline(cin, keyword);
-
-    keyword = convertToLower(keyword);
-
-    bool found = false;
-
-    BookNode* temp = firstBook;
-
-    while (temp != NULL)
-    {
-        string title =
-        convertToLower(
-        temp->bookTitle);
-
-        if (title.find(keyword)
-            != string::npos)
-        {
-            cout << "------------------"
-                 << endl;
-
-            cout << "Book ID: "
-                 << temp->bookID
-                 << endl;
-
-            cout << "Title: "
-                 << temp->bookTitle
-                 << endl;
-
-            cout << "Author: "
-                 << temp->authorName
-                 << endl;
-
-            if (temp->isAvailable)
-            {
-                cout << "Status: Available"
-                     << endl;
-            }
-            else
-            {
-                cout << "Status: Borrowed"
-                     << endl;
-            }
-
-            found = true;
-        }
-
-        temp = temp->next;
-    }
-
-    if (!found)
-    {
-        cout << "Book not found."
-             << endl;
-    }
 }
 string convertToLower(string text)
 {
@@ -1268,7 +1332,7 @@ int main()
         cout << "2. User"
              << endl;
 
-        cout << "3. Back"
+        cout << "3. Exit"
              << endl;
 
         cout << "Enter Choice: ";
@@ -1356,7 +1420,7 @@ int main()
 
                 else if (adminChoice == 5)
                 {
-                    library.sortBooksByID();
+                    library.selectionSortIDs();
                 }
 
                 else if (adminChoice == 6)
